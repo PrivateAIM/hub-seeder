@@ -1,0 +1,54 @@
+{
+    "name": "@privateaim/hub-seeder",
+    "version": "0.0.0",
+    "type": "module",
+    "description": "Hub seeder service for the HUB architecture",
+    "author": {
+        "name": "Peter Placzek",
+        "email": "contact@tada5hi.net",
+        "url": "https://github.com/tada5hi"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/privateaim/hub-seeder.git"
+    },
+    "main": "dist/index.mjs",
+    "types": "dist/index.d.mts",
+    "exports": {
+        "./package.json": "./package.json",
+        ".": {
+            "types": "./dist/index.d.mts",
+            "import": "./dist/index.mjs"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "engines": {
+        "node": ">=22.0.0"
+    },
+    "scripts": {
+        "build": "tsdown",
+        "test": "vitest --config test/vitest.config.ts --run",
+        "test:coverage": "vitest --config test/vitest.config.ts --run --coverage",
+        "lint": "eslint",
+        "lint:fix": "npm run lint -- --fix",
+        "prepare": "husky"
+    },
+    "keywords": [],
+    "publishConfig": {
+        "access": "public"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "@tada5hi/commitlint-config": "^1.3.1",
+        "@tada5hi/eslint-config": "^2.3.1",
+        "@tada5hi/tsconfig": "^0.7.2",
+        "eslint": "^10.5.0",
+        "husky": "^9.1.7",
+        "tsdown": "^0.22.3",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.61.1",
+        "vitest": "^4.1.9"
+    }
+}
