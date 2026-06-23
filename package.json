@@ -1,6 +1,6 @@
 {
     "name": "@privateaim/hub-seeder",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "type": "module",
     "description": "Hub seeder CLI for provisioning preview and test environments",
     "author": {
