@@ -5,21 +5,13 @@
  */
 
 import { defineCommand } from 'citty';
-import fs from 'node:fs';
-import path from 'node:path';
-import process from 'node:process';
+import pkg from '../../package.json' with { type: 'json' };
 import {
     defineCLISeedNodeCommand,
     defineCLISeedProjectCommand,
 } from './commands/index.ts';
 
 export async function createCLIEntryPointCommand() {
-    const pkgRaw = await fs.promises.readFile(
-        path.join(process.cwd(), 'package.json'),
-        { encoding: 'utf8' },
-    );
-    const pkg = JSON.parse(pkgRaw);
-
     return defineCommand({
         meta: {
             name: pkg.name,
