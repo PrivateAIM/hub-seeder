@@ -4,9 +4,8 @@
     "type": "module",
     "description": "Hub seeder service for the HUB architecture",
     "author": {
-        "name": "Peter Placzek",
-        "email": "contact@tada5hi.net",
-        "url": "https://github.com/tada5hi"
+        "name": "PrivateAIM",
+        "url": "https://privateaim.de"
     },
     "repository": {
         "type": "git",
