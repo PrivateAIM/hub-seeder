@@ -4,4 +4,5 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-export * from './commands/index.ts';
+export * from './seed-node.ts';
+export * from './seed-project.ts';

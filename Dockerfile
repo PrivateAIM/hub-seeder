@@ -7,4 +7,4 @@ COPY . .
 RUN npm ci && \
     npm run build
 
-CMD ["node", "dist/index.mjs"]
+ENTRYPOINT ["node", "dist/cli/index.mjs"]

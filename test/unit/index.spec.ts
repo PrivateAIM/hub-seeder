@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { add } from '../../src';
+import fs from 'node:fs';
 
-describe('src/index.ts', () => {
-    it('should add numbers', () => {
-        const result = add(1, 2);
-        expect(result).toEqual(3);
+describe('build output', () => {
+    it('should produce CLI and library artifacts', () => {
+        expect(fs.existsSync('dist/cli/index.mjs')).toBe(true);
+        expect(fs.existsSync('dist/index.mjs')).toBe(true);
     });
 });
