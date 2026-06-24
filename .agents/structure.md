@@ -25,7 +25,7 @@ hub-seeder/
 │   └── vitest.config.ts            # Vitest config (80% coverage thresholds)
 ├── dist/                           # Build output (tsdown) — gitignored
 ├── Dockerfile                      # Multi-stage build; CLI as the image entrypoint
-├── tsdown.config.ts                # Build config — two entries, bundles @privateaim/* from source
+├── tsdown.config.ts                # Build config — two entries; runtime deps externalized (resolved from node_modules)
 ├── eslint.config.js                # @tada5hi/eslint-config
 ├── tsconfig.json                   # extends @tada5hi/tsconfig
 └── package.json

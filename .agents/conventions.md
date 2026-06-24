@@ -64,7 +64,7 @@
 
 - `npm run build` (tsdown) emits to `dist/` (gitignored), from two entries — `src/index.ts` (library) and `src/cli/index.ts` (CLI).
 - Output is ESM (`.mjs`) with declaration files (`.d.mts`) and sourcemaps.
-- `@privateaim/*`, `@authup/*`, and `citty` are **always bundled** (not externalized); `@privateaim/*` packages are aliased to their `src/index.ts` so they bundle from source.
+- Runtime dependencies (`@privateaim/*`, `@authup/*`, `citty`) are **externalized**, not bundled — tsdown leaves them as bare `import` specifiers in the output, resolved from `node_modules` at runtime. Only the project's own source is bundled. The build therefore relies on the published packages shipping a runtime build (they do: `dist/index.mjs` + an `exports` map); they no longer ship `src/`, so bundling from source is not an option.
 
 ## Commit Convention
 
@@ -94,7 +94,7 @@ Releases are automated with **release-please** (`.github/workflows/release.yml`,
 
 ## Docker
 
-Multi-stage `Dockerfile` (Node 24 Alpine): builder stage runs `npm ci` + `npm run build`, runtime stage copies `dist/` and sets the CLI as the entrypoint:
+Multi-stage `Dockerfile` (Node 24 Alpine): the builder stage runs `npm ci` + `npm run build`, then `npm prune --omit=dev` to drop devDependencies. The runtime stage copies `package.json`, the pruned `node_modules/`, and `dist/` (deps are externalized, so `node_modules` must ship in the image), and sets the CLI as the entrypoint:
 
 ```dockerfile
 ENTRYPOINT ["node", "dist/cli/index.mjs"]
