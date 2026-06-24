@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/PrivateAIM/hub-seeder/compare/v1.0.2...v1.0.3) (2026-06-24)
+
+
+### Bug Fixes
+
+* update to hub 0.11.5 and externalize build deps ([#6](https://github.com/PrivateAIM/hub-seeder/issues/6)) ([0a1d538](https://github.com/PrivateAIM/hub-seeder/commit/0a1d538d7044cc92c5339a6291714905c4300334))
+
 ## [1.0.2](https://github.com/PrivateAIM/hub-seeder/compare/v1.0.1...v1.0.2) (2026-06-24)
 
 
