@@ -99,6 +99,7 @@ export function createAuthenticatedClients(): AuthenticatedClients {
     const authHook = createAuthupClientAuthenticationHook({
         baseURL: authupUrl,
         tokenCreator,
+        timer: false,
     });
     authHook.attach(hub);
     authHook.attach(authup);
