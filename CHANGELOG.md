@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/PrivateAIM/hub-seeder/compare/v1.0.1...v1.0.2) (2026-06-24)
+
+
+### Bug Fixes
+
+* exit process correctly on success ([111e8a7](https://github.com/PrivateAIM/hub-seeder/commit/111e8a756a3e76d17fa0969aa2b3557e1fa67c98))
+
 ## [1.0.1](https://github.com/PrivateAIM/hub-seeder/compare/v1.0.0...v1.0.1) (2026-06-23)
 
 
