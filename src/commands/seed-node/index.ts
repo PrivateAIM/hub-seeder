@@ -192,15 +192,16 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
         'hub:',
         '  auth:',
         `    clientId: "${clientId}"`,
-        `    clientSecret: "${clientSecret}"`,
         'ui:',
         '  idp:',
         `    clientId: "${clientId}"`,
-        `    clientSecret: "${clientSecret}"`,
     ].join('\n');
 
     fs.writeFileSync(path.join(outputDir, 'values.yaml'), `${valuesYaml}\n`, 'utf8');
     log.info(`Wrote ${path.join(outputDir, 'values.yaml')}`);
+
+    fs.writeFileSync(path.join(outputDir, 'clientSecret'), `${clientSecret}\n`, 'utf8');
+    log.info(`Wrote ${path.join(outputDir, 'clientSecret')}`);
 
     fs.writeFileSync(path.join(outputDir, 'private_key.pem'), `${privateKeyPem}\n`, 'utf8');
     log.info(`Wrote ${path.join(outputDir, 'private_key.pem')}`);
