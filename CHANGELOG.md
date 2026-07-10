@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/PrivateAIM/hub-seeder/compare/v1.0.3...v2.0.0) (2026-07-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* adapt output structure to new node secret handling
+
+### Features
+
+* adapt output structure to new node secret handling ([e7662c2](https://github.com/PrivateAIM/hub-seeder/commit/e7662c22fa187c5e2b3622250296bfb587dbc5d3))
+
 ## [1.0.3](https://github.com/PrivateAIM/hub-seeder/compare/v1.0.2...v1.0.3) (2026-06-24)
 
 
