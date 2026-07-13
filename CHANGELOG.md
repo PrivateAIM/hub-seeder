@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/PrivateAIM/hub-seeder/compare/v2.0.0...v2.0.1) (2026-07-13)
+
+
+### Bug Fixes
+
+* always update clientSecret ([645bd56](https://github.com/PrivateAIM/hub-seeder/commit/645bd56d78dddf22565de1c54f43dc60b55a2920))
+
 ## [2.0.0](https://github.com/PrivateAIM/hub-seeder/compare/v1.0.3...v2.0.0) (2026-07-10)
 
 
