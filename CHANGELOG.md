@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/PrivateAIM/hub-seeder/compare/v2.0.1...v2.0.2) (2026-07-13)
+
+
+### Bug Fixes
+
+* show clientSecret for debugging ([ccf6900](https://github.com/PrivateAIM/hub-seeder/commit/ccf6900c1cb9a97162d4a6a163c5c32978f56f14))
+
 ## [2.0.1](https://github.com/PrivateAIM/hub-seeder/compare/v2.0.0...v2.0.1) (2026-07-13)
 
 
