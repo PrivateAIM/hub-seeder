@@ -153,9 +153,9 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
                 await authupHttp.client.update(clientId, { secret: clientSecret, redirect_uri: redirectUri });
             } else {
                 log.warn('NODE_URL env var not set. Skipping Authup OAuth redirect URI update.');
-                log.info(`Setting Authup OAuth client secret for node client ${clientId}...`);
-                await authupHttp.client.update(clientId, { secret: clientSecret });
             }
+            log.info(`Setting Authup OAuth client secret for node client ${clientId}...`);
+            await authupHttp.client.update(clientId, { secret: clientSecret });
         });
     } else {
         skip('Set Authup OAuth client secret & redirect URI', 'Node client id is unavailable.');
