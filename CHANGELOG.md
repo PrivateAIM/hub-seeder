@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.3](https://github.com/PrivateAIM/hub-seeder/compare/v2.0.2...v2.0.3) (2026-07-15)
+
+
+### Bug Fixes
+
+* no newline in clientSecret file ([05cf8fa](https://github.com/PrivateAIM/hub-seeder/commit/05cf8fa11636b993746e89b80f507c1b87aaee6c))
+* remove offending blank line ([fa864c9](https://github.com/PrivateAIM/hub-seeder/commit/fa864c9652b4d51f23f394e65ea36c23de5efc79))
+
 ## [2.0.2](https://github.com/PrivateAIM/hub-seeder/compare/v2.0.1...v2.0.2) (2026-07-13)
 
 
