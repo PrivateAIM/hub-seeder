@@ -49,7 +49,7 @@
         "@privateaim/core-http-kit": "^0.11.5",
         "@privateaim/core-kit": "^0.11.5",
         "@privateaim/kit": "^0.11.5",
-        "@privateaim/server-kit": "^0.11.5",
+        "@privateaim/server-kit": "^0.13.0",
         "citty": "^0.2.2"
     },
     "devDependencies": {
