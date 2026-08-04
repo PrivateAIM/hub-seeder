@@ -61,10 +61,13 @@ GitHub Actions (`.github/workflows/main.yml`) runs on push/PR to `develop`, `mas
 
 ```
 Install ──▶ Build ──▶ Lint
-                 └──▶ Test   (npm run test, after build)
+            (types    └──▶ Test   (npm run test, after build)
+             + js)
 ```
 
 All jobs run on Node 24 (`PRIMARY_NODE_VERSION`).
+
+The Build step (`.github/actions/build`) runs `npm run build`, which type-checks before bundling — so `tsc` errors fail CI. The action caches `dist/**` keyed on the commit SHA, so the Lint and Test jobs reuse the artifact and the type-check runs once per commit.
 
 ## Writing New Tests
 

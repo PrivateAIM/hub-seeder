@@ -11,7 +11,9 @@ A one-shot CLI for provisioning **preview and test environments** of the Private
 npm ci
 
 # Development
-npm run build        # tsdown → dist/ (library + CLI)
+npm run build        # type-check, then bundle → dist/ (library + CLI)
+npm run build:types  # tsc --noEmit only  (fast feedback while editing)
+npm run build:js     # tsdown only        (skips the type-check — CI never does)
 npm test             # vitest (run build first; tests assert on dist/)
 npm run lint         # eslint  (npm run lint:fix to autofix)
 
@@ -22,7 +24,7 @@ npm run seed-project
 
 - **Node.js**: `>=22` (CI and Docker use Node 24)
 - **Package manager**: npm
-- **Build orchestration**: [tsdown](https://tsdown.dev) (ESM + `.d.mts`, two entry points)
+- **Build orchestration**: [tsdown](https://tsdown.dev) (ESM + `.d.mts`, two entry points), gated by a `tsc --noEmit` type-check
 
 ### CLI Entry Points
 

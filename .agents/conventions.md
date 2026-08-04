@@ -5,6 +5,7 @@
 | Tool                          | Purpose                                                              |
 |-------------------------------|---------------------------------------------------------------------|
 | [tsdown](https://tsdown.dev)  | Build/bundle — produces ESM + `.d.mts` for the library and CLI      |
+| [TypeScript](https://typescriptlang.org) (`tsc --noEmit`) | Type-check — gates the bundle (tsdown does not check types) |
 | [ESLint](https://eslint.org) (`@tada5hi/eslint-config`) | Linting (flat config, `eslint.config.js`)  |
 | [Vitest](https://vitest.dev)  | Test runner (see [testing.md](./testing.md))                        |
 | [citty](https://github.com/unjs/citty) | CLI command definitions                                    |
@@ -16,6 +17,7 @@
 
 - After making changes, **always build** (`npm run build`) and **run the linter** (`npm run lint`, or `npm run lint:fix`) on the changed files.
 - The build is a prerequisite for tests — run `npm run build` before `npm test`.
+- `npm run build` is `build:types` (`tsc --noEmit`) followed by `build:js` (tsdown), so a type error fails the build before anything is emitted. Never verify a change with `build:js` alone — tsdown does not type-check, so it happily bundles code that does not compile. This is how a breaking dependency upgrade once landed on `master` with a green CI.
 - Keep core command logic (`src/commands/`) free of `citty` and `process.argv`; new user-facing input belongs in the `src/cli/` adapter and is passed down as typed options.
 
 ## Code Style
@@ -56,13 +58,18 @@
 ## TypeScript
 
 - Extends `@tada5hi/tsconfig`. Target **ES2022**, module **ESNext**, moduleResolution **bundler**.
-- `noEmit: true` — tsdown owns emit; `tsc` is type-check only.
+- `noEmit: true` — tsdown owns emit; `tsc` is type-check only, run as the `build:types` script.
 - `allowImportingTsExtensions: true` — hence the explicit `.ts` import extensions above.
 - `package.json` imported with an import attribute: `import pkg from '../../package.json' with { type: 'json' }`.
 
 ## Build Output
 
-- `npm run build` (tsdown) emits to `dist/` (gitignored), from two entries — `src/index.ts` (library) and `src/cli/index.ts` (CLI).
+- `npm run build` runs two scripts in order:
+  | Script         | Command        | Role                                                        |
+  |----------------|----------------|-------------------------------------------------------------|
+  | `build:types`  | `tsc --noEmit` | Type-check over `src/**/*`; fails the build before any emit |
+  | `build:js`     | `tsdown`       | Bundle + declaration emit to `dist/`                        |
+- `build:js` emits to `dist/` (gitignored), from two entries — `src/index.ts` (library) and `src/cli/index.ts` (CLI).
 - Output is ESM (`.mjs`) with declaration files (`.d.mts`) and sourcemaps.
 - Runtime dependencies (`@privateaim/*`, `@authup/*`, `citty`) are **externalized**, not bundled — tsdown leaves them as bare `import` specifiers in the output, resolved from `node_modules` at runtime. Only the project's own source is bundled. The build therefore relies on the published packages shipping a runtime build (they do: `dist/index.mjs` + an `exports` map); they no longer ship `src/`, so bundling from source is not an option.
 

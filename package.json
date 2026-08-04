@@ -30,7 +30,9 @@
         "node": ">=22.0.0"
     },
     "scripts": {
-        "build": "tsdown",
+        "build": "npm run build:types && npm run build:js",
+        "build:js": "tsdown",
+        "build:types": "tsc --noEmit",
         "seed-node": "node dist/cli/index.mjs seed-node",
         "seed-project": "node dist/cli/index.mjs seed-project",
         "test": "vitest --config test/vitest.config.ts --run",
