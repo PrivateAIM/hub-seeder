@@ -102,7 +102,9 @@ authHook.attach(hub);
 authHook.attach(authup);
 ```
 
-It throws immediately if `CLIENT_ID` / `CLIENT_SECRET` are absent.
+It throws immediately if `HUB_URL` / `AUTHUP_URL` or `CLIENT_ID` / `CLIENT_SECRET` are absent.
+
+> **API shape note:** since `@privateaim/core-http-kit` 0.13, entity properties are **camelCase** (`externalName`, `registryId`, `publicKey`, `clientId`, `nodeId`, `projectId`, `displayName`), read endpoints take rapiq v2 query input (`{ filters: { name: [value] } }` — note the plural), and `getOne`/`create`/`update` resolve to an `{ data, meta }` envelope, so the record must be unwrapped via `const { data } = await client.node.getOne(id)`. `getMany` returns `{ data: T[], meta }` as before.
 
 ## Data Flow
 
@@ -113,10 +115,10 @@ Input:
   └── node name (--node-name | NODE_NAME), NODE_TYPE, NODE_URL, PROJECT_NAME?, OUTPUT_DIR
 
 Processing (steps):
-  1. Create node (if missing)                       — by name; sets external_name, type
+  1. Create node (if missing)                       — by name; sets externalName, type
   2. Assign registry to node                        — default registry "default"
   3. Get node client id                              — polls up to 15× (500ms) for Authup client assignment
-  4. Generate ECDH P-256 key pair, set public_key    — keeps private key in memory
+  4. Generate ECDH P-256 key pair, set publicKey     — keeps private key in memory
   5. Set Authup OAuth client secret & redirect URI   — random 32-char secret; redirect = NODE_URL + "/**"
   6. Assign node to project (if PROJECT_NAME given)   — links node ↔ project, idempotent
 
@@ -129,7 +131,7 @@ Output (only if no failures):
 
 ```
 Input:    PROJECT_NAME (required), PROJECT_DISPLAY_NAME?
-Process:  1. Create project (if missing) — by name; display_name defaults to name
+Process:  1. Create project (if missing) — by name; displayName defaults to name
 Output:   none (resource created on the Hub)
 ```
 
@@ -152,8 +154,8 @@ All runtime configuration is via environment variables (the CLI exposes only `--
 
 | Variable               | Used by         | Purpose                                                              |
 |------------------------|-----------------|---------------------------------------------------------------------|
-| `HUB_URL`              | both            | Hub API base URL                                                    |
-| `AUTHUP_URL`           | both            | Authup API base URL                                                 |
+| `HUB_URL`              | both (required) | Hub API base URL                                                    |
+| `AUTHUP_URL`           | both (required) | Authup API base URL                                                 |
 | `REALM`                | both            | Authup realm for the client-credentials token (default `master`)   |
 | `CLIENT_ID`            | both (required) | Confidential client id used to authenticate                         |
 | `CLIENT_SECRET`        | both (required) | Confidential client secret                                          |

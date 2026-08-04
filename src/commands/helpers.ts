@@ -70,6 +70,13 @@ export function createAuthenticatedClients(): AuthenticatedClients {
     const authupUrl = process.env.AUTHUP_URL;
     const realm = process.env.REALM || 'master';
 
+    if (!hubUrl || !authupUrl) {
+        throw new Error(
+            'No service urls provided. ' +
+            'Set HUB_URL + AUTHUP_URL environment variables.',
+        );
+    }
+
     const log = createLogger();
 
     log.info(`Connecting to Hub: ${hubUrl}`);

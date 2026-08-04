@@ -36,8 +36,8 @@ function resolveNodeType(): NodeType {
 async function getNodeClientIdWithRetries(client: Client, nodeId: string, log: Logger) {
     const maxAttempts = 15;
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        const node = await client.node.getOne(nodeId);
-        if (node.client_id) return node.client_id;
+        const { data: node } = await client.node.getOne(nodeId);
+        if (node.clientId) return node.clientId;
         if (attempt < maxAttempts) {
             log.info(`Waiting for node Authup client assignment (attempt ${attempt}/${maxAttempts})...`);
             await sleep(500);
@@ -92,16 +92,16 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
 
     const externalName = `node_${nodeName.replaceAll(/[^a-zA-Z0-9_-]/g, '_')}`;
     let node = await step('Create node (if missing)', async () => {
-        const { data: existingNodes } = await client.node.getMany({ filter: { name: [nodeName] } });
+        const { data: existingNodes } = await client.node.getMany({ filters: { name: [nodeName] } });
         const existingNode = existingNodes.find((n) => n.name === nodeName);
         if (existingNode) {
             log.info(`Node "${nodeName}" already exists (${existingNode.id}).`);
             return existingNode;
         }
-        log.info(`Creating node "${nodeName}" (external_name: ${externalName})...`);
-        const createdNode = await client.node.create({
+        log.info(`Creating node "${nodeName}" (externalName: ${externalName})...`);
+        const { data: createdNode } = await client.node.create({
             name: nodeName,
-            external_name: externalName,
+            externalName,
             type: nodeType,
         });
         log.info(`Created node: ${createdNode.id}`);
@@ -111,12 +111,13 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
     if (node) {
         node = await step('Assign registry to node', async () => {
             const defaultRegistryName = 'default';
-            const { data: registries } = await client.registry.getMany({ filter: { name: [defaultRegistryName] } });
+            const { data: registries } = await client.registry.getMany({ filters: { name: [defaultRegistryName] } });
             const defaultRegistry = registries.find((item) => item.name === defaultRegistryName);
             if (!defaultRegistry) throw new Error(`Registry "${defaultRegistryName}" was not found.`);
-            if (node!.registry_id !== defaultRegistry.id) {
+            if (node!.registryId !== defaultRegistry.id) {
                 log.info(`Assigning registry "${defaultRegistryName}" to node "${node!.name}"...`);
-                return await client.node.update(node!.id, { registry_id: defaultRegistry.id });
+                const { data: updatedNode } = await client.node.update(node!.id, { registryId: defaultRegistry.id });
+                return updatedNode;
             }
             log.info(`Node "${node!.name}" already uses registry "${defaultRegistryName}".`);
             return node!;
@@ -135,9 +136,10 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
             log.info(`Generating ECDH P-256 key pair for node "${node!.name}"`);
             const { publicKeyPem, privateKeyPem: generatedPrivateKeyPem } = await generateEcdhP256KeyPairPem();
             privateKeyPem = generatedPrivateKeyPem;
-            log.info(`Setting node "${node!.name}" public_key from generated key pair...`);
-            node = await client.node.update(node!.id, { public_key: publicKeyPem });
-            log.info(`Node "${node!.name}" public_key set to: ${publicKeyPem}`);
+            log.info(`Setting node "${node!.name}" publicKey from generated key pair...`);
+            const { data: updatedNode } = await client.node.update(node!.id, { publicKey: publicKeyPem });
+            node = updatedNode;
+            log.info(`Node "${node!.name}" publicKey set to: ${publicKeyPem}`);
         });
     } else {
         skip('Generate key pair and set node public key', 'Node is unavailable.');
@@ -150,7 +152,7 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
             if (nodeUrl) {
                 const redirectUri = `${nodeUrl.replace(/\/+$/, '')}/**`;
                 log.info(`Setting Authup OAuth redirect URI for node client ${clientId} to ${redirectUri}...`);
-                await authupHttp.client.update(clientId, { redirect_uri: redirectUri });
+                await authupHttp.client.update(clientId, { redirectUri });
             } else {
                 log.warn('NODE_URL env var not set. Skipping Authup OAuth redirect URI update.');
             }
@@ -164,15 +166,15 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
 
     if (projectName && node) {
         await step('Assign node to project', async () => {
-            const { data: projects } = await client.project.getMany({ filter: { name: [projectName] } });
+            const { data: projects } = await client.project.getMany({ filters: { name: [projectName] } });
             const project = projects.find((p) => p.name === projectName);
             if (!project) {
                 throw new Error(`Project "${projectName}" not found. Run seed-project first.`);
             }
-            const { data: existing } = await client.projectNode.getMany({ filter: { project_id: [project.id] } });
-            const assignedNodeIds = new Set(existing.map((pn) => pn.node_id));
+            const { data: existing } = await client.projectNode.getMany({ filters: { projectId: [project.id] } });
+            const assignedNodeIds = new Set(existing.map((pn) => pn.nodeId));
             if (!assignedNodeIds.has(node!.id)) {
-                await client.projectNode.create({ node_id: node!.id, project_id: project.id });
+                await client.projectNode.create({ nodeId: node!.id, projectId: project.id });
                 log.info(`Assigned node "${node!.name}" to project "${projectName}".`);
             } else {
                 log.info(`Node "${node!.name}" already assigned to project "${projectName}".`);

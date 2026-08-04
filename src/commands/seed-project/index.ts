@@ -24,14 +24,14 @@ export async function seedProjectCommand(options: SeedProjectCommandOptions) {
     log.info(`Project name: ${projectName}`);
 
     await step('Create project (if missing)', async () => {
-        const { data: existing } = await client.project.getMany({ filter: { name: [projectName] } });
+        const { data: existing } = await client.project.getMany({ filters: { name: [projectName] } });
         const found = existing.find((p) => p.name === projectName);
         if (found) {
             log.info(`Project already exists (${found.id}).`);
             return found;
         }
         log.info('Creating project...');
-        const created = await client.project.create({ name: projectName, display_name: displayName });
+        const { data: created } = await client.project.create({ name: projectName, displayName });
         log.info(`Created project: ${created.id}`);
         return created;
     });
