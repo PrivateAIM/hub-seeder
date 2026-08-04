@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/PrivateAIM/hub-seeder/compare/v2.0.3...v2.1.0) (2026-08-04)
+
+
+### Features
+
+* add "dotenv" for local testing ([6e1dd98](https://github.com/PrivateAIM/hub-seeder/commit/6e1dd98a4728b05cc9d77dc472dd943cbec3a5b5))
+
 ## [2.0.3](https://github.com/PrivateAIM/hub-seeder/compare/v2.0.2...v2.0.3) (2026-07-15)
 
 
