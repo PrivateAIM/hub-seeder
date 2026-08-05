@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.1](https://github.com/PrivateAIM/hub-seeder/compare/v2.1.0...v2.1.1) (2026-08-04)
+
+
+### Bug Fixes
+
+* adapt to hub 0.13 api and bump authup to beta.58 ([cc1b93c](https://github.com/PrivateAIM/hub-seeder/commit/cc1b93c7c7fd1ebfcc463df8136c32f2547cffad))
+* **deps:** bump the minorandpatch group across 1 directory with 8 updates ([7a044ae](https://github.com/PrivateAIM/hub-seeder/commit/7a044ae5c5c3f752f6ad5c8dcaba4202d5591968))
+
 ## [2.1.0](https://github.com/PrivateAIM/hub-seeder/compare/v2.0.3...v2.1.0) (2026-08-04)
 
 
