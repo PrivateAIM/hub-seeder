@@ -4,6 +4,7 @@ node_modules
 .vscode
 .idea
 coverage
+/output/
 *.log
 npm-debug.log*
 .env
