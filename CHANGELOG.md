@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/PrivateAIM/hub-seeder/compare/v2.1.1...v2.1.2) (2026-08-06)
+
+
+### Bug Fixes
+
+* bump hub and authup to fix validation errors ([7bebd5c](https://github.com/PrivateAIM/hub-seeder/commit/7bebd5c519c45de94f502e27cd2ef7d9df83c5c2))
+
 ## [2.1.1](https://github.com/PrivateAIM/hub-seeder/compare/v2.1.0...v2.1.1) (2026-08-04)
 
 
