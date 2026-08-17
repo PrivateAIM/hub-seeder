@@ -47,7 +47,7 @@
     },
     "license": "MIT",
     "dependencies": {
-        "@authup/core-http-kit": "^1.0.0-beta.59",
+        "@authup/core-http-kit": "^1.0.0-beta.61",
         "@privateaim/core-http-kit": "^0.13.2",
         "@privateaim/core-kit": "^0.13.2",
         "@privateaim/kit": "^0.13.2",
