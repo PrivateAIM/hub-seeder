@@ -48,10 +48,10 @@
     "license": "MIT",
     "dependencies": {
         "@authup/core-http-kit": "^1.0.0-beta.59",
-        "@privateaim/core-http-kit": "^0.13.2",
+        "@privateaim/core-http-kit": "^0.13.3",
         "@privateaim/core-kit": "^0.13.2",
         "@privateaim/kit": "^0.13.2",
-        "@privateaim/server-kit": "^0.13.2",
+        "@privateaim/server-kit": "^0.13.3",
         "citty": "^0.2.2"
     },
     "devDependencies": {
