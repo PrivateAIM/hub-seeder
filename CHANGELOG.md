@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.2.0](https://github.com/PrivateAIM/hub-seeder/compare/v2.1.2...v2.2.0) (2026-09-02)
+
+
+### Features
+
+* reuse client secret if already exists ([3611b9b](https://github.com/PrivateAIM/hub-seeder/commit/3611b9bde064a28263f9353cccc7a2064a5bc478))
+
+
+### Bug Fixes
+
+* **deps:** bump the minorandpatch group across 1 directory with 9 updates ([8450d47](https://github.com/PrivateAIM/hub-seeder/commit/8450d47f051f1a14f3eaaa83ee143e0a7121a3ab))
+* **deps:** bump the minorandpatch group across 1 directory with 9 updates ([97791a9](https://github.com/PrivateAIM/hub-seeder/commit/97791a9d6183fb498249431166cced838a74f10f))
+
 ## [2.1.2](https://github.com/PrivateAIM/hub-seeder/compare/v2.1.1...v2.1.2) (2026-08-06)
 
 
