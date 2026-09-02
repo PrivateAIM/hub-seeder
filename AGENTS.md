@@ -2,7 +2,7 @@
 
 # @privateaim/hub-seeder — Agent Guide
 
-A one-shot CLI for provisioning **preview and test environments** of the PrivateAIM HUB. It talks to the **Hub** and **Authup** APIs to idempotently create nodes and projects, provision a node's OAuth client, generate its key pair, and write the `values.yaml` / `private_key.pem` files consumed by the `flame-node` Helm chart. Published both as a library (`seedNodeCommand` / `seedProjectCommand`) and as the `hub-seeder` executable.
+A one-shot CLI for provisioning **preview and test environments** of the PrivateAIM HUB. It talks to the **Hub** and **Authup** APIs to idempotently create nodes and projects, provision a node's OAuth client, generate its key pair, and write the `values.yaml` / `private_key.pem` files consumed by the `flame-node` Helm chart. Re-runs keep existing credentials rather than rotating them. Published both as a library (`seedNodeCommand` / `seedProjectCommand`) and as the `hub-seeder` executable.
 
 ## Quick Reference
 
@@ -34,7 +34,7 @@ npm run seed-project
 
 ### Configuration (environment variables)
 
-All runtime config is via env vars; the only CLI flag is `--node-name`. Required for both commands: `HUB_URL`, `AUTHUP_URL`, `CLIENT_ID`, `CLIENT_SECRET`. `seed-node` also uses `NODE_NAME`/`--node-name`, `NODE_TYPE`, `NODE_URL`, `OUTPUT_DIR`, optional `PROJECT_NAME`. `seed-project` requires `PROJECT_NAME` (+ optional `PROJECT_DISPLAY_NAME`). See [architecture.md](.agents/architecture.md#configuration) for the full table.
+All runtime config is via env vars; the only CLI flag is `--node-name`. Required for both commands: `HUB_URL`, `AUTHUP_URL`, `CLIENT_ID`, `CLIENT_SECRET`. `seed-node` also uses `NODE_NAME`/`--node-name`, `NODE_TYPE`, `NODE_URL`, `OUTPUT_DIR`, optional `PROJECT_NAME`, and `ROTATE_CREDENTIALS` (re-runs keep the node's key pair and OAuth client secret unless this is set). `seed-project` requires `PROJECT_NAME` (+ optional `PROJECT_DISPLAY_NAME`). See [architecture.md](.agents/architecture.md#configuration) for the full table.
 
 ## Detailed Guides
 

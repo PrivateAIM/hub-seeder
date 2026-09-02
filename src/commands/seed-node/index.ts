@@ -58,6 +58,30 @@ function randomClientSecret32(): string {
     return randomBytes(24).toString('base64url');
 }
 
+function parseBooleanEnv(name: string): boolean {
+    const raw = process.env[name];
+    if (!raw) return false;
+    return ['1', 'true', 'yes', 'on'].includes(raw.trim().toLowerCase());
+}
+
+export interface ReusableClientSecret {
+    secret?: string | null;
+    secretHashed?: boolean | null;
+    secretEncrypted?: boolean | null;
+}
+
+/**
+ * A stored client secret can only be handed back to the node when Authup keeps it
+ * verbatim. A hashed or encrypted secret is unusable as a credential, so the only
+ * way forward in that case is to set a fresh one.
+ */
+export function canReuseClientSecret(client: ReusableClientSecret): boolean {
+    if (!client.secret) return false;
+    if (client.secretHashed) return false;
+    if (client.secretEncrypted) return false;
+    return true;
+}
+
 export interface SeedNodeCommandOptions {
     nodeName: string;
     outputDir: string;
@@ -72,6 +96,7 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
 
     const nodeType = resolveNodeType();
     const nodeUrl = process.env.NODE_URL;
+    const rotateCredentials = parseBooleanEnv('ROTATE_CREDENTIALS');
 
     const {
         hub: client,
@@ -130,9 +155,16 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
         await step('Get node client id', async () => getNodeClientIdWithRetries(client, node!.id, log)) :
         (skip('Get node client id', 'Node is unavailable.'), undefined);
 
+    // The Hub only ever stores the public half, so a regenerated pair cannot be
+    // reconciled with the private key the node already holds: once a node has a
+    // public key, the pair is kept and no private key is written this run.
     let privateKeyPem: string | undefined;
     if (node) {
-        await step('Generate key pair and set node public key', async () => {
+        await step('Ensure node key pair', async () => {
+            if (node!.publicKey && !rotateCredentials) {
+                log.info(`Node "${node!.name}" already has a public key; keeping the existing key pair.`);
+                return;
+            }
             log.info(`Generating ECDH P-256 key pair for node "${node!.name}"`);
             const { publicKeyPem, privateKeyPem: generatedPrivateKeyPem } = await generateEcdhP256KeyPairPem();
             privateKeyPem = generatedPrivateKeyPem;
@@ -142,26 +174,47 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
             log.info(`Node "${node!.name}" publicKey set to: ${publicKeyPem}`);
         });
     } else {
-        skip('Generate key pair and set node public key', 'Node is unavailable.');
+        skip('Ensure node key pair', 'Node is unavailable.');
     }
 
     let clientSecret: string | undefined;
     if (clientId) {
-        await step('Set Authup OAuth client secret & redirect URI', async () => {
-            clientSecret = randomClientSecret32();
+        await step('Ensure Authup OAuth client secret & redirect URI', async () => {
+            // "+secret" is an additive field: Authup omits the secret from the default
+            // selection, so it has to be requested explicitly.
+            const { data: existingClient } = await authupHttp.client.getOne(clientId, { fields: ['+secret'] });
+
             if (nodeUrl) {
                 const redirectUri = `${nodeUrl.replace(/\/+$/, '')}/**`;
-                log.info(`Setting Authup OAuth redirect URI for node client ${clientId} to ${redirectUri}...`);
-                await authupHttp.client.update(clientId, { redirectUri });
+                if (existingClient.redirectUri === redirectUri) {
+                    log.info(`Authup OAuth redirect URI for node client ${clientId} is already ${redirectUri}.`);
+                } else {
+                    log.info(`Setting Authup OAuth redirect URI for node client ${clientId} to ${redirectUri}...`);
+                    await authupHttp.client.update(clientId, { redirectUri });
+                }
             } else {
                 log.warn('NODE_URL env var not set. Skipping Authup OAuth redirect URI update.');
             }
+
+            if (!rotateCredentials && canReuseClientSecret(existingClient)) {
+                clientSecret = existingClient.secret!;
+                log.info(`Reusing the stored Authup OAuth client secret for node client ${clientId}.`);
+                return;
+            }
+            if (!rotateCredentials && existingClient.secret) {
+                log.warn(
+                    `Authup stores the secret of client ${clientId} hashed or encrypted, so it cannot be read back. ` +
+                    'Setting a new one; the node must pick up the rotated credential.',
+                );
+            }
+
+            clientSecret = randomClientSecret32();
             log.info(`Setting Authup OAuth client secret for node client ${clientId}...`);
             await authupHttp.client.update(clientId, { secret: clientSecret });
             log.info(`ClientSecret: ${clientSecret?.slice(0, 2)}xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`);
         });
     } else {
-        skip('Set Authup OAuth client secret & redirect URI', 'Node client id is unavailable.');
+        skip('Ensure Authup OAuth client secret & redirect URI', 'Node client id is unavailable.');
     }
 
     if (projectName && node) {
@@ -206,8 +259,18 @@ export async function seedNodeCommand(options: SeedNodeCommandOptions) {
     fs.writeFileSync(path.join(outputDir, 'clientSecret'), `${clientSecret}`, 'utf8');
     log.info(`Wrote ${path.join(outputDir, 'clientSecret')}`);
 
-    fs.writeFileSync(path.join(outputDir, 'private_key.pem'), `${privateKeyPem}\n`, 'utf8');
-    log.info(`Wrote ${path.join(outputDir, 'private_key.pem')}`);
+    // Written only when this run produced a key pair. On a re-run against a node that
+    // already has a public key the file is deliberately absent, which tells the caller
+    // to leave the private key the node already holds untouched.
+    if (privateKeyPem) {
+        fs.writeFileSync(path.join(outputDir, 'private_key.pem'), `${privateKeyPem}\n`, 'utf8');
+        log.info(`Wrote ${path.join(outputDir, 'private_key.pem')}`);
+    } else {
+        log.info(
+            `Kept the existing key pair, so no private key was written to ${outputDir}. ` +
+            'Set ROTATE_CREDENTIALS=true to replace it.',
+        );
+    }
 
     log.info('Node seed completed successfully!');
 }

@@ -44,6 +44,13 @@ The design is a thin **adapter → core** split with a lightweight **step runner
 
 Every mutating step is "create if missing": it queries by name first and reuses the existing resource (node, registry assignment, project, project-node link) rather than failing on conflict. This makes the seeder safe to run repeatedly against the same environment — the intended usage for preview/test setups.
 
+This extends to the two **credentials** `seed-node` provisions, which would otherwise make a re-run destructive:
+
+- **Key pair** — a node that already has a `publicKey` keeps it. The Hub stores only the public half, so regenerating the pair would leave the running node holding a private key that no longer matches. When the pair is kept, **no `private_key.pem` is written**; that absence is the signal to leave the node's existing key in place.
+- **OAuth client secret** — read back from Authup with the additive field selection `{ fields: ['+secret'] }` and reused. Authup omits the secret from the default field set, and a deployment that stores it hashed or encrypted cannot return it verbatim, in which case a new secret is set (see `canReuseClientSecret`).
+
+`ROTATE_CREDENTIALS=true` forces both to be replaced. It is the recovery path for credentials lost on the node side, which cannot be reconstructed from the Hub.
+
 ### 2. Step runner with deferred failure
 
 Instead of aborting on the first error, each step is wrapped so a failure is logged (with full request/response detail) and recorded in a `failures[]` list while subsequent steps continue. Steps whose preconditions are unmet are explicitly `skip()`-ped (which also counts as a failure). After all steps run, the command exits with code `1` if `failures.length > 0`. This yields a complete diagnostic picture in one run rather than one-error-at-a-time.
@@ -118,13 +125,14 @@ Processing (steps):
   1. Create node (if missing)                       — by name; sets externalName, type
   2. Assign registry to node                        — default registry "default"
   3. Get node client id                              — polls up to 15× (500ms) for Authup client assignment
-  4. Generate ECDH P-256 key pair, set publicKey     — keeps private key in memory
-  5. Set Authup OAuth client secret & redirect URI   — random 32-char secret; redirect = NODE_URL + "/**"
+  4. Ensure node key pair                            — keeps an existing publicKey; otherwise generates ECDH P-256 and sets it
+  5. Ensure Authup OAuth client secret & redirect URI — reuses the stored secret; redirect = NODE_URL + "/**", updated only when it differs
   6. Assign node to project (if PROJECT_NAME given)   — links node ↔ project, idempotent
 
 Output (only if no failures):
-  ├── <OUTPUT_DIR>/values.yaml      — hub.auth + ui.idp clientId/clientSecret (flame-node chart)
-  └── <OUTPUT_DIR>/private_key.pem  — generated node private key (PEM)
+  ├── <OUTPUT_DIR>/values.yaml      — hub.auth + ui.idp clientId (flame-node chart)
+  ├── <OUTPUT_DIR>/clientSecret     — the reused or newly issued OAuth client secret
+  └── <OUTPUT_DIR>/private_key.pem  — ONLY when this run generated the key pair
 ```
 
 ### `seed-project`
@@ -144,7 +152,7 @@ Output:   none (resource created on the Hub)
 
 ## Authentication
 
-Client-credentials OAuth against Authup. The CLI authenticates as a confidential client (`CLIENT_ID`/`CLIENT_SECRET`) in a realm (`REALM`, default `master`); the resulting token is injected into both the Hub and Authup HTTP clients by the shared auth hook. `seed-node` additionally **provisions** the per-node OAuth client on Authup (rotating its secret and setting its redirect URI).
+Client-credentials OAuth against Authup. The CLI authenticates as a confidential client (`CLIENT_ID`/`CLIENT_SECRET`) in a realm (`REALM`, default `master`); the resulting token is injected into both the Hub and Authup HTTP clients by the shared auth hook. `seed-node` additionally **provisions** the per-node OAuth client on Authup (reusing or issuing its secret and setting its redirect URI).
 
 > **TLS note:** `src/cli/index.ts` sets `NODE_TLS_REJECT_UNAUTHORIZED = '0'`, disabling certificate verification. This is intentional for self-signed preview/test environments and is a deliberate constraint of this tool — do not rely on it in production contexts.
 
@@ -162,6 +170,7 @@ All runtime configuration is via environment variables (the CLI exposes only `--
 | `NODE_NAME`            | seed-node       | Node name to create/find (overridden by `--node-name`)             |
 | `NODE_TYPE`            | seed-node       | `default` or `aggregator` (default `default`)                      |
 | `NODE_URL`             | seed-node       | Node base URL; used to derive the OAuth redirect URI (`<url>/**`)  |
-| `OUTPUT_DIR`           | seed-node       | Directory for `values.yaml` / `private_key.pem` (default `.`)      |
+| `OUTPUT_DIR`           | seed-node       | Directory for `values.yaml` / `clientSecret` / `private_key.pem` (default `.`) |
+| `ROTATE_CREDENTIALS`   | seed-node       | Replace the key pair and OAuth client secret instead of keeping them (default `false`) |
 | `PROJECT_NAME`         | seed-project (required), seed-node (optional) | Project to create / to assign the node to        |
 | `PROJECT_DISPLAY_NAME` | seed-project    | Project display name (defaults to `PROJECT_NAME`)                  |

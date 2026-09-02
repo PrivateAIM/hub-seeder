@@ -36,7 +36,7 @@ It is published both as a **library** (`seedNodeCommand` / `seedProjectCommand`)
 
 ## Features
 
-- 🌱 **Idempotent seeding** — every step is "create if missing", so the seeder is safe to re-run against the same environment.
+- 🌱 **Idempotent seeding** — every step is "create if missing", and existing credentials are kept rather than replaced, so the seeder is safe to re-run against the same environment.
 - 🧩 **Deferred-failure step runner** — runs every step, collects errors with full request/response detail, and reports a complete diagnostic in a single run.
 - 🔑 **Credential provisioning** — generates an ECDH P-256 key pair and rotates the node's Authup OAuth client secret &amp; redirect URI.
 - 📄 **Chart-ready output** — writes `values.yaml` and `private_key.pem` for the `flame-node` Helm chart.
@@ -72,7 +72,14 @@ All configuration is provided via environment variables (see [Configuration](#co
 
 ### `seed-node`
 
-Creates the node (if missing), assigns the default registry, generates an ECDH P-256 key pair and sets the node's public key, provisions its Authup OAuth client (secret + redirect URI derived from `NODE_URL`), optionally assigns it to a project, and — only if every step succeeded — writes `values.yaml` and `private_key.pem` to `OUTPUT_DIR`.
+Creates the node (if missing), assigns the default registry, ensures the node has an ECDH P-256 key pair and an Authup OAuth client (secret + redirect URI derived from `NODE_URL`), optionally assigns it to a project, and — only if every step succeeded — writes `values.yaml`, `clientSecret` and `private_key.pem` to `OUTPUT_DIR`.
+
+**Credentials are kept across runs.** A node that already has a public key keeps its key pair, and the OAuth client secret is read back from Authup and reused. The seeder can therefore be re-run against a provisioned node without invalidating the credentials the node is running with. Two consequences follow:
+
+- `private_key.pem` is written **only when this run generated the key pair**. Its absence means "the node keeps the key it already holds" — callers must not treat that as an empty key.
+- If Authup stores the client secret hashed or encrypted it cannot be read back, so a new secret is set and the node has to pick up the rotated credential.
+
+Set `ROTATE_CREDENTIALS=true` to replace both instead. This is the recovery path when the credentials on the node side were lost: the Hub only ever stores the public half of the key pair, so a lost private key cannot be recovered — only replaced.
 
 ```bash
 HUB_URL=https://hub.example AUTHUP_URL=https://authup.example \
@@ -104,7 +111,8 @@ PROJECT_NAME=my-project \
 | `NODE_NAME` | seed-node | Node name to create/find (overridden by `--node-name`) |
 | `NODE_TYPE` | seed-node | `default` or `aggregator` (default `default`) |
 | `NODE_URL` | seed-node | Node base URL; used to derive the OAuth redirect URI (`<url>/**`) |
-| `OUTPUT_DIR` | seed-node | Directory for `values.yaml` / `private_key.pem` (default `.`) |
+| `OUTPUT_DIR` | seed-node | Directory for `values.yaml` / `clientSecret` / `private_key.pem` (default `.`) |
+| `ROTATE_CREDENTIALS` | seed-node | Replace the node key pair and OAuth client secret instead of keeping them (default `false`) |
 | `PROJECT_NAME` | seed-project **(required)**, seed-node (optional) | Project to create / to assign the node to |
 | `PROJECT_DISPLAY_NAME` | seed-project | Project display name (defaults to `PROJECT_NAME`) |
 
