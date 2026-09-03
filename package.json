@@ -48,10 +48,10 @@
     "license": "MIT",
     "dependencies": {
         "@authup/core-http-kit": "^1.0.0-beta.59",
-        "@privateaim/core-http-kit": "^0.14.0",
-        "@privateaim/core-kit": "^0.14.0",
-        "@privateaim/kit": "^0.14.0",
-        "@privateaim/server-kit": "^0.14.0",
+        "@privateaim/core-http-kit": "^0.15.0",
+        "@privateaim/core-kit": "^0.15.0",
+        "@privateaim/kit": "^0.15.0",
+        "@privateaim/server-kit": "^0.15.0",
         "citty": "^0.2.2"
     },
     "devDependencies": {
@@ -59,11 +59,11 @@
         "@tada5hi/eslint-config": "^2.4.0",
         "@tada5hi/tsconfig": "^0.7.2",
         "dotenv": "^17.4.2",
-        "eslint": "^10.9.0",
+        "eslint": "^10.9.1",
         "husky": "^9.1.7",
         "tsdown": "^0.22.14",
         "typescript": "^6.0.3",
-        "typescript-eslint": "^8.67.0",
+        "typescript-eslint": "^8.68.0",
         "vitest": "^4.1.11"
     }
 }
