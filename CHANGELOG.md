@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.2.2](https://github.com/PrivateAIM/hub-seeder/compare/v2.2.1...v2.2.2) (2026-10-28)
+
+
+### Bug Fixes
+
+* **deps-dev:** bump vite from 8.2.2 to 8.3.5 ([#46](https://github.com/PrivateAIM/hub-seeder/issues/46)) ([71f6f53](https://github.com/PrivateAIM/hub-seeder/commit/71f6f53620cd2eb58e2814a2bc3ab25968cf527b))
+* **deps:** bump @vitest/mocker and vitest ([#47](https://github.com/PrivateAIM/hub-seeder/issues/47)) ([daf52d9](https://github.com/PrivateAIM/hub-seeder/commit/daf52d982840c07f6a56379432a4b997a8798179))
+* **deps:** bump tada5hi/action-docker-image-publish from 3 to 4 ([#29](https://github.com/PrivateAIM/hub-seeder/issues/29)) ([27f0cd4](https://github.com/PrivateAIM/hub-seeder/commit/27f0cd45897b27ff416f229969a7635a232923f6))
+* **deps:** bump tada5hi/monoship from 2.1.0 to 2.2.0 ([#54](https://github.com/PrivateAIM/hub-seeder/issues/54)) ([95b78c2](https://github.com/PrivateAIM/hub-seeder/commit/95b78c2bf55d41084f0fea755067aa440dcd1592))
+* **deps:** bump the minorandpatch group across 1 directory with 7 updates ([#42](https://github.com/PrivateAIM/hub-seeder/issues/42)) ([cb4881b](https://github.com/PrivateAIM/hub-seeder/commit/cb4881b59f8b0aee52360ed6d57667f0cd950276))
+
 ## [2.2.1](https://github.com/PrivateAIM/hub-seeder/compare/v2.2.0...v2.2.1) (2026-10-28)
 
 
