@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.2.1](https://github.com/PrivateAIM/hub-seeder/compare/v2.2.0...v2.2.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* **deps-dev:** bump brace-expansion from 5.0.6 to 5.0.9 ([#25](https://github.com/PrivateAIM/hub-seeder/issues/25)) ([ec97104](https://github.com/PrivateAIM/hub-seeder/commit/ec97104c0d372daee7275c2c9f40eb13199c2de0))
+* **deps-dev:** bump brace-expansion from 5.0.9 to 5.0.12 ([#51](https://github.com/PrivateAIM/hub-seeder/issues/51)) ([0aeb9b1](https://github.com/PrivateAIM/hub-seeder/commit/0aeb9b19ae4e2fb5280e909c06c96f28076dd559))
+* **deps-dev:** bump fast-uri from 3.1.5 to 3.1.9 ([#52](https://github.com/PrivateAIM/hub-seeder/issues/52)) ([8c8137d](https://github.com/PrivateAIM/hub-seeder/commit/8c8137dc9f96d475f4e2325cea190554770da6cd))
+* **deps-dev:** bump js-yaml from 4.3.1 to 4.3.2 ([#43](https://github.com/PrivateAIM/hub-seeder/issues/43)) ([89d03b1](https://github.com/PrivateAIM/hub-seeder/commit/89d03b19392cd527da4c6175a315e735e0c93595))
+* **deps:** bump qs from 6.15.3 to 6.17.0 ([#50](https://github.com/PrivateAIM/hub-seeder/issues/50)) ([6784920](https://github.com/PrivateAIM/hub-seeder/commit/6784920d2b6d5ad445cee342c878b2bd6eedcc7f))
+* **deps:** bump source-map-js from 1.2.1 to 1.2.2 ([#45](https://github.com/PrivateAIM/hub-seeder/issues/45)) ([ced9b19](https://github.com/PrivateAIM/hub-seeder/commit/ced9b191435c2ad0db9fa60897ef6d8e8113d49d))
+* **deps:** bump zod from 4.4.3 to 4.6.7 ([#49](https://github.com/PrivateAIM/hub-seeder/issues/49)) ([e709288](https://github.com/PrivateAIM/hub-seeder/commit/e709288991e3bb5c3b0f09007ed8e655c529c6f0))
+
 ## [2.2.0](https://github.com/PrivateAIM/hub-seeder/compare/v2.1.2...v2.2.0) (2026-09-02)
 
 
